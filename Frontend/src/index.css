@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 120px;
+  }
+
+  body {
+    @apply font-sans text-surface-800 bg-surface-50 antialiased selection:bg-primary-200 selection:text-primary-900;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display tracking-tight text-surface-900;
+  }
+}
+
+@layer components {
+
+  /* Clean Professional Utilities */
+  .container-custom {
+    @apply w-full max-w-[1280px] mx-auto px-6 sm:px-8 lg:px-12;
+  }
+}
+
+@layer utilities {
+  .btn-primary {
+    @apply px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-md transition-colors duration-200 shadow-sm text-center inline-block;
+  }
+
+  .btn-outline {
+    @apply px-8 py-3 bg-transparent border border-primary-600 text-primary-700 hover:bg-primary-50 font-medium rounded-md transition-colors duration-200 text-center inline-block;
+  }
+
+  .card-clean {
+    @apply bg-white rounded-xl border border-surface-200 p-6 shadow-subtle hover:shadow-card transition-shadow duration-300;
+  }
+
+  /* Typography Enhancements */
+  .heading-xl {
+    @apply text-4xl lg:text-5xl font-bold text-surface-900 leading-tight;
+  }
+
+  .heading-lg {
+    @apply text-3xl font-bold text-surface-900 leading-snug;
+  }
+
+  .text-body {
+    @apply text-surface-600 leading-relaxed;
+  }
+
+  /* 3D Perspective Utilities */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+}
