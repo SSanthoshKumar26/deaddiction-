@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
 
 const generatePdf = async (htmlContent, appointmentId) => {
     let browser;
@@ -7,6 +7,7 @@ const generatePdf = async (htmlContent, appointmentId) => {
         console.log(`[PDF Service] Generating PDF for Appointment: ${appointmentId}`);
 
         browser = await puppeteer.launch({
+            executablePath: '/usr/bin/chromium',
             headless: true,
             args: [
                 '--no-sandbox',
@@ -26,22 +27,10 @@ const generatePdf = async (htmlContent, appointmentId) => {
 
         const pdfBuffer = await page.pdf({
             format: 'A4',
-            printBackground: true,
-            margin: {
-                top: '20px',
-                bottom: '20px',
-                left: '20px',
-                right: '20px'
-            }
+            printBackground: true
         });
 
         await browser.close();
-
-        if (!pdfBuffer || pdfBuffer.length === 0) {
-            throw new Error('Generated PDF buffer is empty');
-        }
-
-        console.log(`[PDF Service] Successfully generated PDF (${pdfBuffer.length} bytes)`);
 
         return pdfBuffer;
 
