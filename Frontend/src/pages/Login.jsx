@@ -37,20 +37,24 @@ const Login = () => {
         setError('');
 
         // Clean input for mobile compatibility:
-        // 1. Remove non-printable characters
-        // 2. Replace variations of spaces with standard space
-        // 3. Trim and lowercase email
-        const cleanString = (str) => {
+        const cleanEmail = (str) => {
             if (!str) return '';
             return str.replace(/[\u200B-\u200D\uFEFF]/g, '') // remove invisible chars
-                .replace(/\s+/g, ' ') // normalize whitespace
+                .replace(/\s+/g, '') // remove ALL whitespace for email
+                .toLowerCase()
                 .trim();
+        };
+
+        const cleanPassword = (str) => {
+            if (!str) return '';
+            return str.replace(/[\u200B-\u200D\uFEFF]/g, '') // remove invisible chars
+                .trim(); // Only trim, don't touch internal spaces
         };
 
         try {
             const trimmedData = {
-                email: cleanString(loginData.email).toLowerCase(),
-                password: cleanString(loginData.password)
+                email: cleanEmail(loginData.email),
+                password: cleanPassword(loginData.password)
             };
 
             const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
@@ -212,6 +216,9 @@ const Login = () => {
                                                 name="password"
                                                 type={showPassword ? "text" : "password"}
                                                 autoComplete="current-password"
+                                                autoCapitalize="none"
+                                                autoCorrect="off"
+                                                spellCheck="false"
                                                 required
                                                 value={loginData.password}
                                                 onChange={handleLoginChange}

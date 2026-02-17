@@ -49,11 +49,25 @@ const Signup = () => {
         setError('');
 
         try {
+            const cleanEmail = (str) => {
+                if (!str) return '';
+                return str.replace(/[\u200B-\u200D\uFEFF]/g, '')
+                    .replace(/\s+/g, '')
+                    .toLowerCase()
+                    .trim();
+            };
+
+            const cleanPassword = (str) => {
+                if (!str) return '';
+                return str.replace(/[\u200B-\u200D\uFEFF]/g, '')
+                    .trim();
+            };
+
             const trimmedData = {
                 name: formData.name.trim(),
-                email: formData.email.trim().toLowerCase(),
+                email: cleanEmail(formData.email),
                 mobile: formData.mobile.trim(),
-                password: formData.password.trim()
+                password: cleanPassword(formData.password)
             };
 
             const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
@@ -223,6 +237,10 @@ const Signup = () => {
                                             id="password"
                                             name="password"
                                             type={showPassword ? "text" : "password"}
+                                            autoComplete="new-password"
+                                            autoCapitalize="none"
+                                            autoCorrect="off"
+                                            spellCheck="false"
                                             required
                                             value={formData.password}
                                             onChange={handleChange}
@@ -250,6 +268,10 @@ const Signup = () => {
                                             id="confirmPassword"
                                             name="confirmPassword"
                                             type="password"
+                                            autoComplete="new-password"
+                                            autoCapitalize="none"
+                                            autoCorrect="off"
+                                            spellCheck="false"
                                             required
                                             value={formData.confirmPassword}
                                             onChange={handleChange}
