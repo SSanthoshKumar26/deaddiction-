@@ -20,16 +20,20 @@ import AppointmentConfirmation from './pages/AppointmentConfirmation';
 import AppointmentVerification from './pages/AppointmentVerification';
 import ReviewModal from './components/ReviewModal';
 import { useLoading } from './context/LoadingContext';
+import MobileSidebar from './components/MobileSidebar';
 
 function App() {
   const { pathname } = useLocation();
   const { isLoading } = useLoading();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const isAdminPage = pathname === '/admin-dashboard' || pathname.startsWith('/admin');
   const isVerifyPage = pathname.startsWith('/verify-appointment');
 
   const openReviewModal = () => setIsReviewModalOpen(true);
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const closeSidebar = () => setIsSidebarOpen(false);
 
   return (
     <>
@@ -38,9 +42,20 @@ function App() {
       </AnimatePresence>
 
       <div
-        className={`flex flex-col min-h-screen font-sans text-surface-800 bg-white selection:bg-primary-100 overflow-x-hidden transition-opacity duration-700 ${isLoading ? 'h-screen overflow-hidden opacity-0' : 'opacity-100'}`}
+        className={`flex flex-col min-h-screen font-sans text-surface-800 bg-white selection:bg-primary-100 transition-opacity duration-700 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
       >
-        {!isAdminPage && !isVerifyPage && <Navbar openReviewModal={openReviewModal} />}
+        {!isAdminPage && !isVerifyPage && (
+          <Navbar
+            openReviewModal={openReviewModal}
+            onOpenSidebar={() => setIsSidebarOpen(true)}
+          />
+        )}
+
+        <MobileSidebar
+          isOpen={isSidebarOpen}
+          onClose={closeSidebar}
+          openReviewModal={openReviewModal}
+        />
 
         {/* 
             The main content area uses a dynamic padding-top.
