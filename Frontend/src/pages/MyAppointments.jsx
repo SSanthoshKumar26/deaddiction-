@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaCalendarAlt, FaUserMd, FaCheckCircle, FaTimesCircle, FaClock, FaIdCard, FaChevronRight, FaPlus } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { SkeletonCard } from '../components/SkeletonLoader';
+import API_BASE_URL from '../api/config';
 
 const MyAppointments = () => {
     const { user } = useAuth();
@@ -22,7 +23,7 @@ const MyAppointments = () => {
         const fetchAppointments = async () => {
             try {
                 const config = { headers: { Authorization: `Bearer ${user.token}` } };
-                const res = await axios.get('http://localhost:5000/api/appointments/my', config);
+                const res = await axios.get(`${API_BASE_URL}/api/appointments/my`, config);
                 if (res.data.success) {
                     setAppointments(res.data.data);
                 }

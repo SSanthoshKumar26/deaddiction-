@@ -6,6 +6,7 @@ import {
     FaClock, FaExclamationTriangle, FaWalking, FaMapMarkerAlt, FaPhoneAlt
 } from 'react-icons/fa';
 import toast, { Toaster } from 'react-hot-toast';
+import API_BASE_URL from '../api/config';
 
 const AppointmentVerification = () => {
     const { id } = useParams();
@@ -17,7 +18,7 @@ const AppointmentVerification = () => {
     useEffect(() => {
         const fetchDetails = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/api/appointments/verify/${id}`);
+                const res = await axios.get(`${API_BASE_URL}/api/appointments/verify/${id}`);
                 if (res.data.success) {
                     setAppointment(res.data.data);
                 }
@@ -35,7 +36,7 @@ const AppointmentVerification = () => {
     const handleCheckIn = async () => {
         setCheckingIn(true);
         try {
-            const res = await axios.put(`http://localhost:5000/api/appointments/checkin/${id}`);
+            const res = await axios.put(`${API_BASE_URL}/api/appointments/checkin/${id}`);
             if (res.data.success) {
                 toast.success("Arrival recorded successfully.");
                 setAppointment(prev => ({ ...prev, checkedIn: true }));

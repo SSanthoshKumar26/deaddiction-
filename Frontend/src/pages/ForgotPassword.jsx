@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { FiMail, FiLock, FiCheckCircle, FiArrowLeft, FiShield } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
+import API_BASE_URL from '../api/config';
 
 const ForgotPassword = () => {
     const navigate = useNavigate();
@@ -25,7 +26,7 @@ const ForgotPassword = () => {
 
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:5000/api/auth/forgotpassword', {
+            const res = await fetch(`${API_BASE_URL}/api/auth/forgotpassword`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email }),
@@ -55,7 +56,7 @@ const ForgotPassword = () => {
         setLoading(true);
         try {
             // Step 1 of Reset Flow: Verify OTP
-            const res = await fetch('http://localhost:5000/api/auth/verifyotp', {
+            const res = await fetch(`${API_BASE_URL}/api/auth/verifyotp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, otp }),
@@ -101,7 +102,7 @@ const ForgotPassword = () => {
         setLoading(true);
         try {
             // Step 2 of Reset Flow: Set New Password
-            const res = await fetch('http://localhost:5000/api/auth/resetpassword', {
+            const res = await fetch(`${API_BASE_URL}/api/auth/resetpassword`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, otp, password }),
@@ -222,8 +223,8 @@ const ForgotPassword = () => {
                                                 value={otp}
                                                 onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                                                 className={`block w-full px-4 py-4 bg-slate-50 border rounded-xl transition-all text-center font-mono text-3xl font-bold tracking-[0.5em] placeholder:text-slate-300 ${otpVerified
-                                                        ? 'border-green-500 text-slate-400 bg-green-50/50'
-                                                        : 'border-slate-200 text-slate-800 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500'
+                                                    ? 'border-green-500 text-slate-400 bg-green-50/50'
+                                                    : 'border-slate-200 text-slate-800 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500'
                                                     }`}
                                                 placeholder="------"
                                                 maxLength={6}

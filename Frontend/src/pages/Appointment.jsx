@@ -8,6 +8,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { format, differenceInYears, isFuture } from 'date-fns';
+import API_BASE_URL from '../api/config';
 
 const Appointment = () => {
     const { user } = useAuth();
@@ -248,7 +249,7 @@ const Appointment = () => {
                 }
             };
 
-            const res = await axios.post('http://localhost:5000/api/appointments/book', payload, config);
+            const res = await axios.post(`${API_BASE_URL}/api/appointments/book`, payload, config);
 
             if (res.data.success) {
                 sessionStorage.removeItem('appointmentForm');

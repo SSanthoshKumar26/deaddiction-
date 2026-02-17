@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FiMail, FiLock, FiArrowRight, FiAlertCircle, FiEye, FiEyeOff, FiArrowLeft, FiKey, FiCheckCircle } from 'react-icons/fi';
 import { useLoading } from '../context/LoadingContext';
 import { useAuth } from '../context/AuthContext';
+import API_BASE_URL from '../api/config';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -36,7 +37,7 @@ const Login = () => {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/login', {
+            const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(loginData),
@@ -74,7 +75,7 @@ const Login = () => {
         setError('');
 
         try {
-            const res = await fetch('http://localhost:5000/api/auth/forgotpassword', {
+            const res = await fetch(`${API_BASE_URL}/api/auth/forgotpassword`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: resetEmail }),
@@ -103,7 +104,7 @@ const Login = () => {
         setError('');
 
         try {
-            const res = await fetch('http://localhost:5000/api/auth/resetpassword', {
+            const res = await fetch(`${API_BASE_URL}/api/auth/resetpassword`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: resetEmail, otp, password: newPassword }),

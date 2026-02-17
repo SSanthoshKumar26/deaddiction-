@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { FiStar, FiUser, FiMessageSquare } from 'react-icons/fi';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import API_BASE_URL from '../api/config';
 
 const ReviewCard = ({ review }) => (
     <div className="flex-shrink-0 w-80 md:w-96 p-6 mx-4 bg-white/80 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 relative group overflow-hidden">
@@ -72,7 +73,7 @@ const ReviewSection = () => {
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/reviews');
+                const res = await axios.get(`${API_BASE_URL}/api/reviews`);
                 if (res.data.success) {
                     setReviews(res.data.data);
                 }

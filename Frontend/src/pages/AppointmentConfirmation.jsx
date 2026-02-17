@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import { FaCheckCircle, FaArrowLeft, FaEnvelopeOpenText, FaIdCard, FaUserMd, FaCalendarAlt, FaShieldAlt, FaMapMarkerAlt, FaFileContract, FaClock } from 'react-icons/fa';
 import toast, { Toaster } from 'react-hot-toast';
+import API_BASE_URL from '../api/config';
 
 const AppointmentConfirmation = () => {
     const { appointmentId } = useParams();
@@ -22,7 +23,7 @@ const AppointmentConfirmation = () => {
         const fetchAppointment = async () => {
             try {
                 const config = { headers: { Authorization: `Bearer ${user.token}` } };
-                const res = await axios.get(`http://localhost:5000/api/appointments/${appointmentId}`, config);
+                const res = await axios.get(`${API_BASE_URL}/api/appointments/${appointmentId}`, config);
                 if (res.data.success) {
                     setAppointment(res.data.data);
                 }

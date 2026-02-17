@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiUser, FiMail, FiPhone, FiLock, FiCheckCircle, FiAlertCircle, FiArrowRight, FiEye, FiEyeOff } from 'react-icons/fi';
+import API_BASE_URL from '../api/config';
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -48,7 +49,7 @@ const Signup = () => {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/register', {
+            const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

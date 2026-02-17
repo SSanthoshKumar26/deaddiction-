@@ -4,6 +4,7 @@ import { FiX, FiStar } from 'react-icons/fi';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
+import API_BASE_URL from '../api/config';
 
 const ReviewModal = ({ isOpen, onClose }) => {
     const [submitRating, setSubmitRating] = useState(5);
@@ -20,7 +21,7 @@ const ReviewModal = ({ isOpen, onClose }) => {
         setLoading(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const res = await axios.post('http://localhost:5000/api/reviews', { rating: submitRating, comment }, config);
+            const res = await axios.post(`${API_BASE_URL}/api/reviews`, { rating: submitRating, comment }, config);
 
             if (res.data.success) {
                 toast.success("Review submitted successfully!");

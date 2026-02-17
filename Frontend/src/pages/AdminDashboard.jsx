@@ -18,6 +18,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import Skeleton, { SkeletonStats } from '../components/SkeletonLoader';
+import API_BASE_URL from '../api/config';
 
 // ----------------------------------------------------------------------
 // COMPONENTS
@@ -134,7 +135,7 @@ const AdminDashboard = () => {
         if (!window.confirm("Are you sure you want to delete this review?")) return;
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const res = await axios.delete(`http://localhost:5000/api/reviews/${id}`, config);
+            const res = await axios.delete(`${API_BASE_URL}/api/reviews/${id}`, config);
             if (res.data.success) {
                 toast.success("Review deleted");
                 setReviews(reviews.filter(r => r._id !== id));
@@ -159,9 +160,9 @@ const AdminDashboard = () => {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
 
             const [aptRes, userRes, reviewRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/appointments/admin/all', config),
-                axios.get('http://localhost:5000/api/admin/users', config),
-                axios.get('http://localhost:5000/api/reviews', config)
+                axios.get(`${API_BASE_URL}/api/appointments/admin/all`, config),
+                axios.get(`${API_BASE_URL}/api/admin/users`, config),
+                axios.get(`${API_BASE_URL}/api/reviews`, config)
             ]);
 
             if (aptRes.data.success) {
@@ -204,7 +205,7 @@ const AdminDashboard = () => {
         if (!window.confirm(`Confirm action: ${action.toUpperCase()}?`)) return;
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.put(`http://localhost:5000/api/appointments/admin/${action}/${id}`, {}, config);
+            await axios.put(`${API_BASE_URL}/api/appointments/admin/${action}/${id}`, {}, config);
             toast.success(`Success: Appointment ${action}`);
             fetchAllData();
             setSelectedAppointment(null);
@@ -217,7 +218,7 @@ const AdminDashboard = () => {
         if (!window.confirm("WARNING: Delete this record permanently?")) return;
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.delete(`http://localhost:5000/api/appointments/admin/${id}`, config);
+            await axios.delete(`${API_BASE_URL}/api/appointments/admin/${id}`, config);
             toast.success("Record deleted");
             fetchAllData();
             setSelectedAppointment(null);
