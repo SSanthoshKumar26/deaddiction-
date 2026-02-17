@@ -6,7 +6,9 @@ const appointmentSlipTemplate = require('../utils/appointmentSlipTemplate');
 const User = require('../models/User');
 const {
     appointmentAdminNotificationTemplate,
-    appointmentRejectionTemplate
+    appointmentRejectionTemplate,
+    appointmentConfirmationTemplate,
+    appointmentRequestTemplate
 } = require('../utils/emailTemplates');
 
 // @desc    Book a new appointment (Patient)
@@ -27,15 +29,24 @@ exports.bookAppointment = async (req, res) => {
         });
 
         const adminEmailContent = appointmentAdminNotificationTemplate(req.body);
+        const patientEmailContent = appointmentRequestTemplate(req.body);
 
         try {
+            // Send to Admin
             await sendEmail({
                 email: 'soberhospital.care@gmail.com',
                 subject: `New Appointment Request - ${fullName}`,
                 html: adminEmailContent
             });
+
+            // Send to Patient
+            await sendEmail({
+                email: email,
+                subject: `Request Received: Clinical Intake - SOBER CENTER`,
+                html: patientEmailContent
+            });
         } catch (emailError) {
-            console.error('Failed to send admin notification email', emailError);
+            console.error('Failed to send notification emails', emailError);
         }
 
         res.status(201).json({
@@ -124,88 +135,7 @@ exports.confirmAppointment = async (req, res) => {
                 if (!pdfBuffer) throw new Error('PDF Generation failed');
 
                 // 3. Premium Branded Email Body
-                const premiumEmailHtml = `
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <style>
-                            @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;700&display=swap');
-                            body { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; line-height: 1.6; color: #1e293b; margin: 0; padding: 0; background-color: #f8fafc; }
-                            .wrapper { padding: 40px 20px; }
-                            .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 32px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); }
-                            .header { background: #0f172a; padding: 40px; text-align: left; }
-                            .logo { font-size: 22px; font-weight: 800; color: #ffffff; text-transform: uppercase; letter-spacing: -0.02em; }
-                            .body-content { padding: 40px; }
-                            .badge { display: inline-block; padding: 6px 14px; background: #e0f2fe; color: #0284c7; border-radius: 10px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 24px; }
-                            h2 { font-size: 32px; font-weight: 800; color: #0f172a; margin: 0 0 16px 0; letter-spacing: -0.02em; }
-                            .intro-text { font-size: 16px; color: #475569; margin-bottom: 32px; font-weight: 500; }
-                            
-                            .details-grid { background: #f1f5f9; border-radius: 20px; padding: 30px; margin-bottom: 32px; display: grid; grid-template-columns: 1fr; gap: 20px; }
-                            .detail-item { }
-                            .label { font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 4px; }
-                            .value { font-size: 15px; font-weight: 700; color: #0f172a; display: block; }
-                            
-                            .attachment-section { border: 2px dashed #e2e8f0; padding: 30px; border-radius: 24px; text-align: center; margin-bottom: 32px; }
-                            .attachment-icon { font-size: 24px; margin-bottom: 12px; display: block; }
-                            .attachment-title { font-size: 14px; font-weight: 800; color: #0f172a; display: block; margin-bottom: 8px; }
-                            .attachment-desc { font-size: 13px; color: #64748b; font-weight: 500; }
-                            
-                            .cta-notice { background: #0284c7; color: #ffffff; border-radius: 16px; padding: 20px; text-align: center; font-size: 14px; font-weight: 700; margin-bottom: 32px; }
-                            
-                            .footer { background: #f8fafc; padding: 40px; border-top: 1px solid #e2e8f0; text-align: center; }
-                            .footer-text { font-size: 12px; color: #94a3b8; font-weight: 600; line-height: 1.8; }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="wrapper">
-                            <div class="container">
-                                <div class="header">
-                                    <div class="logo">SOBER CENTRE</div>
-                                </div>
-                                <div class="body-content">
-                                    <div class="badge">Clinical Verification System</div>
-                                    <h2>Consultation Confirmed</h2>
-                                    <p class="intro-text">Dear <strong>${appointment.fullName}</strong>,<br><br>Your clinical intake for the specified psychiatric evaluation has been formally verified and scheduled within our institutional system.</p>
-                                    
-                                    <div class="details-grid">
-                                        <div class="detail-item">
-                                            <span class="label">Consultation ID</span>
-                                            <span class="value" style="color: #0284c7;">#${appointmentId}</span>
-                                        </div>
-                                        <div class="detail-item">
-                                            <span class="label">Scheduled Date</span>
-                                            <span class="value">${new Date(appointment.preferredDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
-                                        </div>
-                                        <div class="detail-item">
-                                            <span class="label">Assigned Slot</span>
-                                            <span class="value">${appointment.preferredTimeSlot}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="attachment-section">
-                                        <span class="attachment-title">📎 Official Appointment Slip (PDF)</span>
-                                        <p class="attachment-desc">Your encrypted digital slip is attached to this email. This document is mandatory for premises entry and clinical intake.</p>
-                                    </div>
-
-                                    <div class="cta-notice">
-                                        Mandatory: Please present the digital/printed PDF at the reception.
-                                    </div>
-
-                                    <p style="font-size: 14px; color: #475569; font-weight: 500;">Please arrive exactly <strong>15 minutes</strong> before your assigned slot to complete the pre-intake screening protocols.</p>
-                                </div>
-
-                                <div class="footer">
-                                    <p class="footer-text">
-                                        <strong>SOBER Psychiatric Centre & Clinical Intake Unit</strong><br>
-                                        26, Nehru Nagar, Madurai, TN • Helpline: +91 74185 51156<br>
-                                        © 2026 Institutional Clinical Records
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </body>
-                    </html>
-                `;
+                const premiumEmailHtml = appointmentConfirmationTemplate(appointment, appointmentId);
 
                 // 4. Send Email with PDF Attachment
                 const safeName = appointment.fullName.replace(/[^a-zA-Z0-9]/g, '').slice(0, 30);

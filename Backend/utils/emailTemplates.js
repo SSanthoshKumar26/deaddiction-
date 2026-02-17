@@ -72,7 +72,25 @@ exports.appointmentRequestTemplate = (details) => `
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Appointment Received</title>
-    <style>${getBaseStyles()}</style>
+    <style>
+        body { margin: 0; padding: 0; background-color: #0f172a; font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+        .wrapper { width: 100%; table-layout: fixed; background-color: #0f172a; padding: 40px 0; }
+        .main { background-color: #1e293b; margin: 0 auto; width: 100%; max-width: 600px; border-spacing: 0; color: #f8fafc; border-radius: 32px; overflow: hidden; border: 1px solid #334155; }
+        .header { padding: 48px 40px; text-align: left; }
+        .logo-text { color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: -0.025em; margin: 0; text-transform: uppercase; }
+        .logo-text span { color: #38bdf8; font-weight: 300; }
+        .content { padding: 0 40px 40px 40px; }
+        .title { font-size: 32px; font-weight: 800; color: #ffffff; margin-bottom: 24px; letter-spacing: -0.025em; }
+        .description { font-size: 16px; color: #94a3b8; line-height: 1.6; margin-bottom: 32px; }
+        .card { background-color: #0f172a; border-radius: 24px; padding: 32px; margin-bottom: 32px; border: 1px solid #334155; }
+        .card-row { margin-bottom: 20px; }
+        .card-row:last-child { margin-bottom: 0; }
+        .card-label { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 8px; }
+        .card-value { font-size: 18px; font-weight: 700; color: #ffffff; }
+        .footer { background-color: #0f172a; padding: 40px; text-align: left; border-top: 1px solid #334155; }
+        .footer-text { font-size: 12px; color: #64748b; line-height: 1.8; margin: 0; }
+        .status-badge { display: inline-block; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; background: rgba(234, 88, 12, 0.1); color: #fb923c; border: 1px solid rgba(234, 88, 12, 0.2); }
+    </style>
 </head>
 <body>
     <center class="wrapper">
@@ -84,10 +102,10 @@ exports.appointmentRequestTemplate = (details) => `
             </tr>
             <tr>
                 <td class="content">
-                    <h2 class="title" style="color: #0f172a;">Request Received</h2>
+                    <h2 class="title">Request Received</h2>
                     <p class="description">
-                        Dear <strong>${details.fullName}</strong>,<br>
-                        We have received your appointment request. Our team will review shortly and confirm your slot.
+                        Dear <strong>${details.fullName}</strong>,<br><br>
+                        We have received your clinical intake request. Our medical team is currently reviewing your details. You will receive a confirmation once your slot is approved.
                     </p>
                     
                     <div class="card">
@@ -100,24 +118,20 @@ exports.appointmentRequestTemplate = (details) => `
                             <span class="card-value">${details.preferredTimeSlot || 'Flexible'}</span>
                         </div>
                         <div class="card-row">
-                            <span class="card-label">Doctor</span>
-                            <span class="card-value">${details.preferredDoctor || 'Specialist'}</span>
-                        </div>
-                         <div class="card-row">
-                            <span class="card-label">Status</span>
-                            <span class="card-value" style="color: #ea580c;">Pending Review</span>
+                            <span class="card-label">Current Status</span>
+                            <div class="status-badge">PENDING REVIEW</div>
                         </div>
                     </div>
 
-                     <p class="description" style="font-size: 14px;">
-                        We appreciate your trust in us. You will receive a confirmation email once your appointment is approved.
+                    <p style="font-size: 14px; color: #64748b; font-weight: 500;">
+                        Wait time for clinical review is typically less than 2 hours during operational hours.
                     </p>
                 </td>
             </tr>
             <tr>
                 <td class="footer">
-                    <p class="footer-text">Questions? Call +91 97510 55190</p>
-                    <p class="footer-text">SOBER Psychiatric & De-Addiction Center</p>
+                    <p class="footer-text"><strong>SOBER Psychiatric & De-Addiction Center</strong></p>
+                    <p class="footer-text">26, Nehru Nagar, Madurai, TN • Helpline: +91 97510 55190</p>
                 </td>
             </tr>
         </table>
@@ -131,14 +145,31 @@ exports.appointmentAdminNotificationTemplate = (details) => `
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>New Appointment</title>
-    <style>${getBaseStyles()}</style>
+    <title>New Intake Request</title>
+    <style>
+        body { margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+        .wrapper { width: 100%; table-layout: fixed; background-color: #f8fafc; padding: 40px 0; }
+        .main { background-color: #ffffff; margin: 0 auto; width: 100%; max-width: 600px; border-spacing: 0; color: #0f172a; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; }
+        .header { background: #0f172a; padding: 32px 40px; text-align: left; }
+        .logo-text { color: #ffffff; font-size: 20px; font-weight: 800; letter-spacing: -0.025em; margin: 0; text-transform: uppercase; }
+        .logo-text span { color: #ef4444; }
+        .content { padding: 40px; }
+        .title { font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 24px; letter-spacing: -0.025em; }
+        .card { background-color: #f8fafc; border-radius: 16px; padding: 24px; margin-bottom: 24px; border: 1px solid #e2e8f0; }
+        .card-row { margin-bottom: 16px; display: flex; justify-content: space-between; align-items: baseline; }
+        .card-row:last-child { margin-bottom: 0; }
+        .card-label { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; width: 120px; }
+        .card-value { font-size: 15px; font-weight: 600; color: #0f172a; text-align: right; flex: 1; }
+        .footer { background-color: #f8fafc; padding: 32px 40px; text-align: center; border-top: 1px solid #f1f5f9; }
+        .footer-text { font-size: 12px; color: #94a3b8; margin: 0; }
+        .btn { display: inline-block; background-color: #0f172a; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; }
+    </style>
 </head>
 <body>
     <center class="wrapper">
         <table class="main" role="presentation">
              <tr>
-                <td class="header" style="background: #0f172a;">
+                <td class="header">
                    <h1 class="logo-text">ADMIN <span>ALERT</span></h1>
                 </td>
             </tr>
@@ -148,7 +179,7 @@ exports.appointmentAdminNotificationTemplate = (details) => `
                     
                     <div class="card">
                          <div class="card-row">
-                            <span class="card-label">Patient Name</span>
+                            <span class="card-label">Patient</span>
                             <span class="card-value">${details.fullName}</span>
                         </div>
                         <div class="card-row">
@@ -156,18 +187,23 @@ exports.appointmentAdminNotificationTemplate = (details) => `
                             <span class="card-value">${details.phone}</span>
                         </div>
                          <div class="card-row">
-                            <span class="card-label">Date</span>
-                            <span class="card-value">${new Date(details.preferredDate).toLocaleDateString()}</span>
+                            <span class="card-label">Schedule Date</span>
+                            <span class="card-value">${new Date(details.preferredDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                         </div>
                          <div class="card-row">
-                            <span class="card-label">Concern</span>
-                            <span class="card-value" style="font-weight: 500;">${details.primaryConcern}</span>
+                            <span class="card-label">Primary Concern</span>
+                            <span class="card-value">${details.primaryConcern}</span>
                         </div>
                     </div>
 
-                    <div class="btn-container">
-                        <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}/login" class="btn">Process in Dashboard</a>
+                    <div style="text-align: center; margin-top: 32px;">
+                        <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}/login" class="btn">View in Dashboard</a>
                     </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="footer">
+                    <p class="footer-text">Institutional Clinical Records System v2.0</p>
                 </td>
             </tr>
         </table>
@@ -181,103 +217,82 @@ exports.appointmentConfirmationTemplate = (details, appointmentId) => `
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Digital Appointment Slip</title>
-    <style>${getBaseStyles()}</style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultation Confirmed</title>
+    <style>
+        body { margin: 0; padding: 0; background-color: #0f172a; font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+        .wrapper { width: 100%; table-layout: fixed; background-color: #0f172a; padding: 40px 0; }
+        .main { background-color: #1e293b; margin: 0 auto; width: 100%; max-width: 600px; border-spacing: 0; color: #f8fafc; border-radius: 32px; overflow: hidden; border: 1px solid #334155; }
+        .header { padding: 48px 40px; text-align: left; }
+        .logo-text { color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: -0.025em; margin: 0; text-transform: uppercase; }
+        .logo-text span { color: #38bdf8; font-weight: 300; }
+        .content { padding: 0 40px 40px 40px; }
+        .status-header { margin-bottom: 32px; }
+        .status-title { font-size: 32px; font-weight: 800; color: #10b981; margin: 0; letter-spacing: -0.025em; text-transform: uppercase; }
+        .description { font-size: 16px; color: #94a3b8; line-height: 1.6; margin-bottom: 32px; }
+        .card { background-color: #0f172a; border-radius: 24px; padding: 32px; margin-bottom: 32px; border: 1px solid #334155; }
+        .card-row { margin-bottom: 24px; }
+        .card-row:last-child { margin-bottom: 0; }
+        .card-label { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 8px; }
+        .card-value { font-size: 18px; font-weight: 700; color: #ffffff; }
+        .card-value.primary { color: #38bdf8; font-family: 'Roboto Mono', monospace; }
+        .pdf-section { border: 2px dashed #334155; padding: 32px; border-radius: 24px; text-align: center; margin-top: 32px; background: rgba(15, 23, 42, 0.5); }
+        .pdf-icon { font-size: 24px; margin-bottom: 12px; display: block; }
+        .pdf-title { font-size: 16px; font-weight: 700; color: #ffffff; display: block; margin-bottom: 8px; }
+        .pdf-desc { font-size: 14px; color: #94a3b8; line-height: 1.5; }
+        .footer { background-color: #0f172a; padding: 40px; text-align: left; border-top: 1px solid #334155; }
+        .footer-text { font-size: 12px; color: #64748b; line-height: 1.8; margin: 0; }
+        .btn { display: inline-block; background: #ffffff; color: #0f172a; padding: 16px 32px; border-radius: 16px; font-weight: 700; text-decoration: none; margin-top: 24px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; }
+    </style>
 </head>
-<body style="background-color: #f1f5f9;">
+<body>
     <center class="wrapper">
-        <table class="main" role="presentation" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
-            <!-- Medical Header -->
+        <table class="main" role="presentation">
             <tr>
-                <td class="header" style="background-color: #0f172a; padding: 40px 30px; text-align: left; border-bottom: 4px solid #3b82f6;">
-                   <h1 class="logo-text" style="font-size: 24px; margin-bottom: 8px;">SOBER <span style="font-weight: 300; opacity: 0.9;">PSYCHIATRIC CENTER</span></h1>
-                   <p style="margin: 0; color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;">Excellence in Mental Health & De-Addiction</p>
+                <td class="header">
+                   <h1 class="logo-text">SOBER <span>CENTER</span></h1>
                 </td>
             </tr>
-            
-            <!-- Slip Body -->
             <tr>
-                <td class="content" style="padding: 40px 30px;">
-                    <div style="border-left: 4px solid #10b981; padding-left: 20px; margin-bottom: 30px;">
-                        <h2 class="title" style="text-align: left; margin-bottom: 4px; color: #0f172a;">Appointment Confirmed</h2>
-                        <p style="margin: 0; color: #10b981; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em;">Digital Entry Pass Generated</p>
+                <td class="content">
+                    <div class="status-header">
+                        <h2 class="status-title">CONSULTATION CONFIRMED</h2>
                     </div>
-
-                    <p class="description" style="text-align: left; color: #334155;">
-                        Dear <strong>${details.fullName}</strong>,<br>
-                        This email serves as your official digital appointment slip. Please present this at the reception desk upon arrival.
+                    <p class="description">
+                        Dear <strong>${details.fullName}</strong>,<br><br>
+                        Your clinical intake for the specified psychiatric evaluation has been formally verified and scheduled within our institutional system.
                     </p>
                     
-                    <!-- Digital Slip Container -->
-                    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; margin-top: 25px;">
-                        
-                        <!-- Reference ID -->
-                        <div style="background-color: #e2e8f0; padding: 15px 25px; border-bottom: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.1em;">Reference ID</span>
-                            <span style="font-family: monospace; font-size: 16px; font-weight: 700; color: #0f172a; letter-spacing: 0.05em;">${appointmentId}</span>
+                    <div class="card">
+                        <div class="card-row">
+                            <span class="card-label">CONSULTATION ID</span>
+                            <span class="card-value primary">#${appointmentId}</span>
                         </div>
-
-                        <div style="padding: 25px;">
-                            <!-- Patient Details Section -->
-                            <div style="margin-bottom: 25px;">
-                                <h3 style="font-size: 12px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">Patient Information</h3>
-                                <table style="width: 100%; border-collapse: collapse;">
-                                    <tr>
-                                        <td style="padding: 5px 0; color: #64748b; font-size: 13px; font-weight: 500; width: 40%;">Full Name</td>
-                                        <td style="padding: 5px 0; color: #0f172a; font-size: 13px; font-weight: 600; text-align: right;">${details.fullName}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 5px 0; color: #64748b; font-size: 13px; font-weight: 500;">Phone</td>
-                                        <td style="padding: 5px 0; color: #0f172a; font-size: 13px; font-weight: 600; text-align: right;">${details.phone}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 5px 0; color: #64748b; font-size: 13px; font-weight: 500;">Email</td>
-                                        <td style="padding: 5px 0; color: #0f172a; font-size: 13px; font-weight: 600; text-align: right;">${details.email}</td>
-                                    </tr>
-                                </table>
-                            </div>
-
-                            <!-- Appointment Details Section -->
-                            <div>
-                                <h3 style="font-size: 12px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">Clinical Details</h3>
-                                <table style="width: 100%; border-collapse: collapse;">
-                                    <tr>
-                                        <td style="padding: 5px 0; color: #64748b; font-size: 13px; font-weight: 500; width: 40%;">Attending Specialist</td>
-                                        <td style="padding: 5px 0; color: #0f172a; font-size: 13px; font-weight: 600; text-align: right;">${details.preferredDoctor || 'Assigned on Arrival'}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 5px 0; color: #64748b; font-size: 13px; font-weight: 500;">Date</td>
-                                        <td style="padding: 5px 0; color: #0f172a; font-size: 13px; font-weight: 600; text-align: right;">${new Date(details.preferredDate).toLocaleDateString()}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 5px 0; color: #64748b; font-size: 13px; font-weight: 500;">Time Slot</td>
-                                        <td style="padding: 5px 0; color: #0f172a; font-size: 13px; font-weight: 600; text-align: right;">${details.preferredTimeSlot || 'Standard Slot'}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 5px 0; color: #64748b; font-size: 13px; font-weight: 500;">Clinic Location</td>
-                                        <td style="padding: 5px 0; color: #0f172a; font-size: 13px; font-weight: 600; text-align: right;">26, Nehru Nagar, Madurai</td>
-                                    </tr>
-                                </table>
-                            </div>
+                        <div class="card-row">
+                            <span class="card-label">SCHEDULED DATE</span>
+                            <span class="card-value">${new Date(details.preferredDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                        </div>
+                        <div class="card-row">
+                            <span class="card-label">ASSIGNED SLOT</span>
+                            <span class="card-value">${details.preferredTimeSlot}</span>
                         </div>
                     </div>
 
-                     <!-- Instructions -->
-                    <div style="background-color: #fff1f2; padding: 15px; border-radius: 8px; margin-top: 25px; border: 1px solid #fecdd3;">
-                        <p style="margin: 0; color: #9f1239; font-size: 12px; line-height: 1.5;">
-                            <strong>Important:</strong> Please arrive 15 minutes prior to your scheduled time. Bring a valid government ID for verification.
-                        </p>
+                    <div class="pdf-section">
+                        <span class="pdf-title">📎 Official Appointment Slip (PDF)</span>
+                        <p class="pdf-desc">Your encrypted digital slip is attached to this email. This document is mandatory for premises entry and clinical intake.</p>
                     </div>
 
-                    <div class="btn-container" style="margin-top: 35px;">
-                        <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}/appointment/confirmation/${details._id}" class="btn" style="background-color: #0f172a; padding: 16px 32px; font-size: 14px; letter-spacing: 0.1em; width: 100%; box-sizing: border-box; text-align: center; display: block;">DOWNLOAD PDF SLIP</a>
-                    </div>
+                    <p style="font-size: 14px; color: #64748b; font-weight: 500; margin-top: 32px;">
+                        Please arrive exactly <strong>15 minutes</strong> before your assigned slot to complete the pre-intake screening protocols.
+                    </p>
                 </td>
             </tr>
-             <tr>
-                <td class="footer" style="background-color: #1e293b; color: #94a3b8; border-top: none;">
-                    <p class="footer-text" style="color: #64748b;">This is an automated message. Please do not reply directly.</p>
-                    <p class="footer-text" style="color: #64748b;">&copy; ${new Date().getFullYear()} SOBER Psychiatric Center. Confidential.</p>
+            <tr>
+                <td class="footer">
+                    <p class="footer-text"><strong>SOBER Psychiatric Centre & Clinical Intake Unit</strong></p>
+                    <p class="footer-text">26, Nehru Nagar, Madurai, TN • Helpline: +91 74185 51156</p>
+                    <p class="footer-text" style="margin-top: 16px; opacity: 0.5;">© 2026 Institutional Clinical Records. Confidential.</p>
                 </td>
             </tr>
         </table>

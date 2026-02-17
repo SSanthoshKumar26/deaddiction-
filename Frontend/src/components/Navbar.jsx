@@ -237,18 +237,20 @@ const Navbar = ({ openReviewModal }) => {
                                                 </div>
                                                 Contact Us
                                             </button>
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleLeaveReview();
-                                                }}
-                                                className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-700 hover:bg-primary-50/50 hover:text-primary-600 transition-all group border-t border-gray-50 rounded-lg mx-1.5 mt-0.5 text-left"
-                                            >
-                                                <div className="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 group-hover:bg-amber-600 group-hover:text-white transition-all shadow-sm">
-                                                    <FiMessageSquare size={18} />
-                                                </div>
-                                                Write a Review
-                                            </button>
+                                            {user && (
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleLeaveReview();
+                                                    }}
+                                                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-700 hover:bg-primary-50/50 hover:text-primary-600 transition-all group border-t border-gray-50 rounded-lg mx-1.5 mt-0.5 text-left"
+                                                >
+                                                    <div className="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 group-hover:bg-amber-600 group-hover:text-white transition-all shadow-sm">
+                                                        <FiMessageSquare size={18} />
+                                                    </div>
+                                                    Write a Review
+                                                </button>
+                                            )}
                                         </div>
                                     </motion.div>
                                 )}
@@ -431,16 +433,17 @@ const Navbar = ({ openReviewModal }) => {
                                     <div className="h-px bg-slate-100 w-full" />
                                 </div>
 
-                                {/* Write Review */}
-                                <button
-                                    onClick={handleLeaveReview}
-                                    className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-700 transition-all group text-left"
-                                >
-                                    <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 group-hover:bg-amber-100 group-hover:text-amber-600 transition-colors">
-                                        <FaStar size={14} />
-                                    </div>
-                                    Write a Review
-                                </button>
+                                {user && (
+                                    <button
+                                        onClick={handleLeaveReview}
+                                        className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-700 transition-all group text-left"
+                                    >
+                                        <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 group-hover:bg-amber-100 group-hover:text-amber-600 transition-colors">
+                                            <FaStar size={14} />
+                                        </div>
+                                        Write a Review
+                                    </button>
+                                )}
 
                                 {/* User Section */}
                                 {user ? (
