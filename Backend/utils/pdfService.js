@@ -6,13 +6,7 @@ const generatePdf = async (htmlContent, appointmentId) => {
     try {
         console.log(`[PDF Service] Generating PDF for Appointment: ${appointmentId}`);
 
-        // Dynamically resolve Chrome path
-        const executablePath = puppeteer.executablePath();
-
-        console.log("Using Chrome at:", executablePath);
-
         browser = await puppeteer.launch({
-            executablePath,
             headless: true,
             args: [
                 '--no-sandbox',
