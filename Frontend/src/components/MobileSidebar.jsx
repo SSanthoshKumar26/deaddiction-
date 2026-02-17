@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
