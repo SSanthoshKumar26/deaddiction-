@@ -122,8 +122,8 @@ const Navbar = ({ openReviewModal }) => {
     return (
         <nav
             ref={navRef}
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out border-b border-gray-100 ${isScrolled
-                ? 'bg-white/95 backdrop-blur-md shadow-sm'
+            className={`fixed top-0 left-0 right-0 z-[1000] transition-all duration-500 ease-in-out border-b border-gray-100/50 ${isScrolled
+                ? 'bg-white/95 backdrop-blur-md shadow-lg shadow-primary-900/5'
                 : 'bg-white shadow-sm'
                 }`}
         >
@@ -221,7 +221,7 @@ const Navbar = ({ openReviewModal }) => {
                                         animate="open"
                                         exit="closed"
                                         variants={dropdownVariants}
-                                        className="absolute top-full right-0 w-56 z-[999] pt-2 pointer-events-auto"
+                                        className="absolute top-full right-0 w-56 z-[1050] pt-2 pointer-events-auto"
                                     >
                                         <div className="bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden py-1.5 shadow-primary-600/5">
                                             <button
@@ -292,7 +292,7 @@ const Navbar = ({ openReviewModal }) => {
                                             animate="open"
                                             exit="closed"
                                             variants={dropdownVariants}
-                                            className="absolute top-full right-0 w-64 z-[999] pt-2 pointer-events-auto"
+                                            className="absolute top-full right-0 w-64 z-[1050] pt-2 pointer-events-auto"
                                         >
                                             <div className="bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden shadow-primary-600/5">
                                                 <div className="px-5 py-4 border-b border-gray-50 bg-surface-50/50">
@@ -382,14 +382,14 @@ const Navbar = ({ openReviewModal }) => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setIsSidebarOpen(false)}
-                            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[111]"
+                            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[1100]"
                         />
                         <motion.div
                             initial={{ x: '-100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '-100%' }}
                             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                            className="fixed top-0 left-0 bottom-0 w-[300px] bg-white/95 backdrop-blur-2xl z-[112] shadow-2xl flex flex-col border-r border-white/20"
+                            className="fixed top-0 left-0 bottom-0 w-[300px] bg-white/95 backdrop-blur-2xl z-[1110] shadow-2xl flex flex-col border-r border-white/20"
                         >
                             {/* Header */}
                             <div className="flex items-center justify-between p-6 border-b border-slate-100">

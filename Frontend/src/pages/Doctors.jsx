@@ -56,7 +56,7 @@ const Doctors = () => {
     return (
         <div className="bg-white min-h-screen selection:bg-primary-100">
             {/* --- HEADER --- */}
-            <section className="pb-20 bg-[#FAF9F6] border-b border-surface-100 mt-8">
+            <section className="pb-20 bg-[#FAF9F6] border-b border-surface-100">
                 <div className="container-custom">
                     <FadeInView className="max-w-3xl">
                         <span className="text-xs font-bold text-primary-600 uppercase tracking-[0.25em] block mb-6">Our Medical Board</span>
