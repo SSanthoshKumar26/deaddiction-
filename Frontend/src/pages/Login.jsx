@@ -37,10 +37,18 @@ const Login = () => {
         setError('');
 
         try {
+            const trimmedData = {
+                email: loginData.email.trim().toLowerCase(),
+                password: loginData.password.trim()
+            };
+
             const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(loginData),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(trimmedData),
             });
 
             const data = await response.json();
@@ -75,10 +83,14 @@ const Login = () => {
         setError('');
 
         try {
+            const trimmedEmail = resetEmail.trim().toLowerCase();
             const res = await fetch(`${API_BASE_URL}/api/auth/forgotpassword`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: resetEmail }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ email: trimmedEmail }),
             });
             const data = await res.json();
 
@@ -166,6 +178,9 @@ const Login = () => {
                                                 name="email"
                                                 type="email"
                                                 required
+                                                autoCapitalize="none"
+                                                autoCorrect="off"
+                                                spellCheck="false"
                                                 value={loginData.email}
                                                 onChange={handleLoginChange}
                                                 className="block w-full pl-11 pr-4 py-3.5 border border-surface-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-surface-800 bg-surface-50/50 focus:bg-white placeholder-surface-400 text-sm font-medium"
@@ -266,6 +281,9 @@ const Login = () => {
                                                 id="resetEmail"
                                                 type="email"
                                                 required
+                                                autoCapitalize="none"
+                                                autoCorrect="off"
+                                                spellCheck="false"
                                                 value={resetEmail}
                                                 onChange={(e) => setResetEmail(e.target.value)}
                                                 className="block w-full pl-11 pr-4 py-3.5 border border-surface-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none text-surface-800 bg-surface-50/50 focus:bg-white placeholder-surface-400 text-sm font-medium"

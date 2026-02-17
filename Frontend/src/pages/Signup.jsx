@@ -49,12 +49,20 @@ const Signup = () => {
         setError('');
 
         try {
+            const trimmedData = {
+                name: formData.name.trim(),
+                email: formData.email.trim().toLowerCase(),
+                mobile: formData.mobile.trim(),
+                password: formData.password.trim()
+            };
+
             const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(trimmedData),
             });
 
             const data = await response.json();
@@ -172,6 +180,9 @@ const Signup = () => {
                                         name="email"
                                         type="email"
                                         required
+                                        autoCapitalize="none"
+                                        autoCorrect="off"
+                                        spellCheck="false"
                                         value={formData.email}
                                         onChange={handleChange}
                                         className="block w-full pl-10 pr-3 py-2.5 border border-surface-200 rounded-lg focus:ring-2 focus:ring-secondary-500 focus:border-transparent transition-all outline-none bg-surface-50/30"
