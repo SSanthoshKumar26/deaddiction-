@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiX, FiStar } from 'react-icons/fi';
 import axios from 'axios';
@@ -36,10 +37,13 @@ const ReviewModal = ({ isOpen, onClose }) => {
         }
     };
 
-    return (
+    const modalContent = (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+                <div
+                    className="fixed inset-0 z-[20000] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md"
+                    onClick={onClose}
+                >
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -101,6 +105,8 @@ const ReviewModal = ({ isOpen, onClose }) => {
             )}
         </AnimatePresence>
     );
+
+    return ReactDOM.createPortal(modalContent, document.body);
 };
 
 export default ReviewModal;

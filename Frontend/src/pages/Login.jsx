@@ -36,10 +36,21 @@ const Login = () => {
         setLoading(true);
         setError('');
 
+        // Clean input for mobile compatibility:
+        // 1. Remove non-printable characters
+        // 2. Replace variations of spaces with standard space
+        // 3. Trim and lowercase email
+        const cleanString = (str) => {
+            if (!str) return '';
+            return str.replace(/[\u200B-\u200D\uFEFF]/g, '') // remove invisible chars
+                .replace(/\s+/g, ' ') // normalize whitespace
+                .trim();
+        };
+
         try {
             const trimmedData = {
-                email: loginData.email.trim().toLowerCase(),
-                password: loginData.password.trim()
+                email: cleanString(loginData.email).toLowerCase(),
+                password: cleanString(loginData.password)
             };
 
             const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
@@ -177,6 +188,8 @@ const Login = () => {
                                             <input
                                                 name="email"
                                                 type="email"
+                                                inputMode="email"
+                                                autoComplete="email"
                                                 required
                                                 autoCapitalize="none"
                                                 autoCorrect="off"
@@ -198,6 +211,7 @@ const Login = () => {
                                             <input
                                                 name="password"
                                                 type={showPassword ? "text" : "password"}
+                                                autoComplete="current-password"
                                                 required
                                                 value={loginData.password}
                                                 onChange={handleLoginChange}

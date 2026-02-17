@@ -51,18 +51,12 @@ function App() {
           />
         )}
 
-        <MobileSidebar
-          isOpen={isSidebarOpen}
-          onClose={closeSidebar}
-          openReviewModal={openReviewModal}
-        />
-
         {/* 
             The main content area uses a dynamic padding-top.
             The --navbar-height variable is set by the Navbar component using a resize observer.
         */}
         <main
-          className="flex-grow overflow-x-hidden transition-[padding] duration-300"
+          className="flex-grow"
           style={{
             paddingTop: (isAdminPage || isVerifyPage) ? '0px' : 'var(--navbar-height, 80px)'
           }}
@@ -85,8 +79,18 @@ function App() {
           </Routes>
         </main>
         {!isAdminPage && !isVerifyPage && <Footer />}
-        <ReviewModal isOpen={isReviewModalOpen} onClose={() => setIsReviewModalOpen(false)} />
       </div>
+
+      <MobileSidebar
+        isOpen={isSidebarOpen}
+        onClose={closeSidebar}
+        openReviewModal={openReviewModal}
+      />
+
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+      />
     </>
   );
 }
