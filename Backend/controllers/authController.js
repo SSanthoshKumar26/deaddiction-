@@ -15,7 +15,9 @@ const generateToken = (id) => {
 // @access  Public
 exports.registerUser = async (req, res) => {
     try {
-        const { name, email, mobile, password, confirmPassword } = req.body;
+        const { name, mobile, confirmPassword } = req.body;
+        const email = req.body.email ? req.body.email.trim().toLowerCase() : '';
+        const password = req.body.password ? req.body.password.trim() : '';
 
         if (!name || !email || !mobile || !password || !confirmPassword) {
             return res.status(400).json({ success: false, message: 'Please provide all fields' });
@@ -67,7 +69,8 @@ exports.registerUser = async (req, res) => {
 // @access  Public
 exports.loginUser = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const email = req.body.email ? req.body.email.trim().toLowerCase() : '';
+        const password = req.body.password ? req.body.password.trim() : '';
 
         // Validate input
         if (!email || !password) {
@@ -194,7 +197,9 @@ exports.verifyOtp = async (req, res) => {
 // @access  Public
 exports.resetPassword = async (req, res) => {
     try {
-        const { email, otp, password } = req.body;
+        const email = req.body.email ? req.body.email.trim().toLowerCase() : '';
+        const otp = req.body.otp ? req.body.otp.trim() : '';
+        const password = req.body.password ? req.body.password.trim() : '';
 
         if (!email || !otp || !password) {
             return res.status(400).json({ success: false, message: 'Please provide email, OTP and new password' });
