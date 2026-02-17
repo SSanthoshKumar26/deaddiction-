@@ -145,7 +145,7 @@ exports.confirmAppointment = async (req, res) => {
                     html: premiumEmailHtml,
                     attachments: [{
                         name: `${safeName || 'Appointment'}_Slip.pdf`,
-                        content: pdfBuffer.toString('base64')
+                        content: Buffer.from(pdfBuffer).toString('base64')
                     }]
                 });
 

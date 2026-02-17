@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer-core');
+const puppeteer = require('puppeteer');
 
 const generatePdf = async (htmlContent, appointmentId) => {
     let browser;
@@ -6,15 +6,19 @@ const generatePdf = async (htmlContent, appointmentId) => {
     try {
         console.log(`[PDF Service] Generating PDF for Appointment: ${appointmentId}`);
 
+        const isProduction = process.env.RENDER === "true";
+
         browser = await puppeteer.launch({
-            executablePath: '/usr/bin/chromium',
             headless: true,
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-gpu'
-            ],
+            executablePath: isProduction ? "/usr/bin/chromium" : undefined,
+            args: isProduction
+                ? [
+                    "--no-sandbox",
+                    "--disable-setuid-sandbox",
+                    "--disable-dev-shm-usage",
+                    "--disable-gpu"
+                ]
+                : [],
             timeout: 60000
         });
 
@@ -31,7 +35,6 @@ const generatePdf = async (htmlContent, appointmentId) => {
         });
 
         await browser.close();
-
         return pdfBuffer;
 
     } catch (error) {
