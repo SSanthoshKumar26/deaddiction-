@@ -6,7 +6,13 @@ const generatePdf = async (htmlContent, appointmentId) => {
     try {
         console.log(`[PDF Service] Generating PDF for Appointment: ${appointmentId}`);
 
+        // Dynamically resolve Chrome path
+        const executablePath = puppeteer.executablePath();
+
+        console.log("Using Chrome at:", executablePath);
+
         browser = await puppeteer.launch({
+            executablePath,
             headless: true,
             args: [
                 '--no-sandbox',
@@ -46,12 +52,8 @@ const generatePdf = async (htmlContent, appointmentId) => {
         return pdfBuffer;
 
     } catch (error) {
-        console.error('[PDF Service] Failed:', error.message);
-
-        if (browser) {
-            await browser.close();
-        }
-
+        console.error('[PDF Service] Failed:', error);
+        if (browser) await browser.close();
         throw error;
     }
 };
