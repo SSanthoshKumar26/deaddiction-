@@ -117,7 +117,10 @@ exports.loginUser = async (req, res) => {
 // @access  Public
 exports.forgotPassword = async (req, res) => {
     try {
-        const user = await User.findOne({ email: req.body.email });
+        const cleanEmail = (str) => str ? str.toString().replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '').replace(/\s+/g, '').toLowerCase().trim() : '';
+        const email = cleanEmail(req.body.email);
+
+        const user = await User.findOne({ email });
 
         if (!user) {
             return res.status(404).json({ success: false, message: 'There is no user with that email' });
@@ -172,7 +175,11 @@ exports.forgotPassword = async (req, res) => {
 // @access  Public
 exports.verifyOtp = async (req, res) => {
     try {
-        const { email, otp } = req.body;
+        const cleanEmail = (str) => str ? str.toString().replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '').replace(/\s+/g, '').toLowerCase().trim() : '';
+        const cleanOtp = (str) => str ? str.toString().replace(/\D/g, '').trim() : '';
+
+        const email = cleanEmail(req.body.email);
+        const otp = cleanOtp(req.body.otp);
 
         if (!email || !otp) {
             return res.status(400).json({ success: false, message: 'Please provide email and OTP' });
@@ -206,9 +213,13 @@ exports.verifyOtp = async (req, res) => {
 // @access  Public
 exports.resetPassword = async (req, res) => {
     try {
-        const email = req.body.email ? req.body.email.trim().toLowerCase() : '';
-        const otp = req.body.otp ? req.body.otp.trim() : '';
-        const password = req.body.password ? req.body.password.trim() : '';
+        const cleanEmail = (str) => str ? str.toString().replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '').replace(/\s+/g, '').toLowerCase().trim() : '';
+        const cleanOtp = (str) => str ? str.toString().replace(/\D/g, '').trim() : '';
+        const cleanPassword = (str) => str ? str.toString().replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '').trim() : '';
+
+        const email = cleanEmail(req.body.email);
+        const otp = cleanOtp(req.body.otp);
+        const password = cleanPassword(req.body.password);
 
         if (!email || !otp || !password) {
             return res.status(400).json({ success: false, message: 'Please provide email, OTP and new password' });

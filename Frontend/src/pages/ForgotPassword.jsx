@@ -14,22 +14,21 @@ const ForgotPassword = () => {
     const [otpVerified, setOtpVerified] = useState(false);
 
     // Form States
-    const [email, setEmail] = useState('');
-    const [otp, setOtp] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+    const cleanEmail = (str) => str ? str.toString().replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '').replace(/\s+/g, '').toLowerCase().trim() : '';
+    const cleanPassword = (str) => str ? str.toString().replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '').trim() : '';
+    const cleanOTP = (str) => str ? str.toString().replace(/\D/g, '').trim() : '';
 
     const handleSendOTP = async (e) => {
         e.preventDefault();
-
-        if (!email) return toast.error('Please enter your email');
+        const cleanedEmail = cleanEmail(email);
+        if (!cleanedEmail) return toast.error('Please enter your email');
 
         setLoading(true);
         try {
             const res = await fetch(`${API_BASE_URL}/api/auth/forgotpassword`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
+                body: JSON.stringify({ email: cleanedEmail }),
             });
 
             const data = await res.json();
@@ -51,7 +50,9 @@ const ForgotPassword = () => {
     const handleVerifyOTP = async (e) => {
         e.preventDefault();
 
-        if (!otp) return toast.error('Please enter the OTP');
+        const cleanedEmail = cleanEmail(email);
+        const cleanedOtp = cleanOTP(otp);
+        if (!cleanedOtp) return toast.error('Please enter the OTP');
 
         setLoading(true);
         try {
@@ -59,7 +60,7 @@ const ForgotPassword = () => {
             const res = await fetch(`${API_BASE_URL}/api/auth/verifyotp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, otp }),
+                body: JSON.stringify({ email: cleanedEmail, otp: cleanedOtp }),
             });
 
             const data = await res.json();
@@ -99,13 +100,17 @@ const ForgotPassword = () => {
             return toast.error('Password must be at least 6 characters');
         }
 
+        const cleanedEmail = cleanEmail(email);
+        const cleanedOtp = cleanOTP(otp);
+        const cleanedPassword = cleanPassword(password);
+
         setLoading(true);
         try {
             // Step 2 of Reset Flow: Set New Password
             const res = await fetch(`${API_BASE_URL}/api/auth/resetpassword`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, otp, password }),
+                body: JSON.stringify({ email: cleanedEmail, otp: cleanedOtp, password: cleanedPassword }),
             });
 
             const data = await res.json();
