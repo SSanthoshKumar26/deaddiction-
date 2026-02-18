@@ -18,6 +18,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import MyAppointments from './pages/MyAppointments';
 import AppointmentConfirmation from './pages/AppointmentConfirmation';
 import AppointmentVerification from './pages/AppointmentVerification';
+import UpdateProfile from './pages/UpdateProfile';
 import ReviewModal from './components/ReviewModal';
 import { useLoading } from './context/LoadingContext';
 import MobileSidebar from './components/MobileSidebar';
@@ -76,6 +77,7 @@ function App() {
             <Route path="/my-appointments" element={<MyAppointments />} />
             <Route path="/appointment/confirmation/:appointmentId" element={<AppointmentConfirmation />} />
             <Route path="/verify-appointment/:id" element={<AppointmentVerification />} />
+            <Route path="/update-profile" element={<UpdateProfile />} />
           </Routes>
         </main>
         {!isAdminPage && !isVerifyPage && <Footer />}

@@ -284,6 +284,19 @@ const Navbar = ({ openReviewModal, onOpenSidebar }) => {
                                                     <p className="text-[11px] text-gray-500 truncate font-medium lowercase normal-case mt-0.5">{user.email?.toLowerCase()}</p>
                                                 </div>
                                                 <div className="p-1.5 pt-2">
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setIsProfileOpen(false);
+                                                            navigate('/update-profile');
+                                                        }}
+                                                        className="w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-bold text-gray-700 hover:bg-primary-50/50 hover:text-primary-600 rounded-lg transition-all group text-left"
+                                                    >
+                                                        <div className="w-9 h-9 rounded-lg bg-surface-50 flex items-center justify-center text-surface-400 group-hover:bg-primary-600 group-hover:text-white transition-all shadow-sm">
+                                                            <FaUser size={16} />
+                                                        </div>
+                                                        Update Profile
+                                                    </button>
                                                     {user.role !== 'admin' && (
                                                         <button
                                                             onClick={(e) => {
@@ -342,9 +355,16 @@ const Navbar = ({ openReviewModal, onOpenSidebar }) => {
                             </Link>
                         )}
 
+                        {/* MOBILE SIGN IN BUTTON */}
+                        {!user && (
+                            <Link
+                                to="/login"
+                                className="lg:hidden flex items-center justify-center px-4 py-2 bg-primary-600 text-white rounded-xl font-black text-[9px] xs:text-[10px] tracking-widest hover:bg-primary-700 transition-all shadow-lg shadow-primary-600/20"
+                            >
+                                SIGN IN
+                            </Link>
+                        )}
 
-
-                        {/* Book Appointment Button - Reduced Padding & Modernized */}
                         {/* Book Appointment Button - Modernized */}
                         <Link
                             to="/appointment"

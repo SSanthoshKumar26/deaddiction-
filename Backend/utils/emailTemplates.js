@@ -65,6 +65,52 @@ exports.forgotPasswordTemplate = (otp) => `
 </html>
 `;
 
+exports.emailVerifyTemplate = (otp) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Email</title>
+    <style>${getBaseStyles()}</style>
+</head>
+<body>
+    <center class="wrapper">
+        <table class="main" role="presentation">
+            <tr>
+                <td class="header">
+                   <h1 class="logo-text">SOBER <span>CENTER</span></h1>
+                </td>
+            </tr>
+            <tr>
+                <td class="content">
+                    <h2 class="title" style="text-align: center;">Verify Your Email</h2>
+                    <p class="description" style="text-align: center;">
+                        Thank you for registering with SOBER Center. Please use the One-Time Password (OTP) below to verify your email address and complete your registration.
+                    </p>
+                    
+                    <div style="background-color: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 24px; padding: 32px; margin: 32px 0; text-align: center;">
+                        <span style="font-size: 12px; font-weight: 800; color: #15803d; text-transform: uppercase; letter-spacing: 0.2em; display: block; margin-bottom: 16px;">Verification Code</span>
+                        <div style="font-size: 48px; font-weight: 800; color: #16a34a; letter-spacing: 8px; font-family: monospace;">${otp}</div>
+                    </div>
+
+                    <p class="description" style="font-size: 14px; margin-bottom: 0; text-align: center;">
+                        This code is valid for 10 minutes.
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td class="footer">
+                    <p class="footer-text">SOBER Psychiatric & De-Addiction Center</p>
+                    <p class="footer-text">&copy; ${new Date().getFullYear()} All rights reserved.</p>
+                </td>
+            </tr>
+        </table>
+    </center>
+</body>
+</html>
+`;
+
 exports.appointmentRequestTemplate = (details) => `
 <!DOCTYPE html>
 <html lang="en">

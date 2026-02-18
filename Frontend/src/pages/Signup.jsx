@@ -11,15 +11,22 @@ const Signup = () => {
         email: '',
         mobile: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        otp: ''
     });
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [otpSent, setOtpSent] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
         setError('');
+    };
+
+    const handleEditDetails = () => {
+        setOtpSent(false);
+        setFormData(prev => ({ ...prev, otp: '' }));
     };
 
     const validateForm = () => {
@@ -43,8 +50,7 @@ const Signup = () => {
         return true;
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSendOtp = async () => {
         if (!validateForm()) return;
 
         setLoading(true);
@@ -54,8 +60,65 @@ const Signup = () => {
             const cleanEmail = (str) => {
                 if (!str) return '';
                 return str.toString()
-                    .replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '') // remove invisible and non-breaking chars
-                    .replace(/\s+/g, '') // remove ALL whitespace for email
+                    .replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '')
+                    .replace(/\s+/g, '')
+                    .toLowerCase()
+                    .trim();
+            };
+
+            const response = await fetch(`${API_BASE_URL}/api/auth/send-verification-otp`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: cleanEmail(formData.email),
+                    name: formData.name.trim()
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                setOtpSent(true);
+                // For development convenience, if devOtp is returned (it shouldn't in prod, but logic exists)
+                if (data.devOtp) {
+                    console.log('DEV OTP:', data.devOtp); // Keep for debugging if needed
+                }
+            } else {
+                setError(data.message || 'Failed to send verification code');
+            }
+        } catch (err) {
+            console.error('OTP Error:', err);
+            setError('Unable to connect to server. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!otpSent) {
+            await handleSendOtp();
+            return;
+        }
+
+        if (!formData.otp || formData.otp.length < 6) {
+            setError('Please enter a valid 6-digit verification code');
+            return;
+        }
+
+        setLoading(true);
+        setError('');
+
+        try {
+            const cleanEmail = (str) => {
+                if (!str) return '';
+                return str.toString()
+                    .replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '')
+                    .replace(/\s+/g, '')
                     .toLowerCase()
                     .trim();
             };
@@ -63,8 +126,8 @@ const Signup = () => {
             const cleanPassword = (str) => {
                 if (!str) return '';
                 return str.toString()
-                    .replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '') // remove invisible and non-breaking chars
-                    .trim(); // Only trim, don't touch internal spaces
+                    .replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '')
+                    .trim();
             };
 
             const cleanMobile = (str) => {
@@ -72,12 +135,18 @@ const Signup = () => {
                 return str.toString().replace(/\s+/g, '').trim();
             };
 
+            const cleanOtp = (str) => {
+                if (!str) return '';
+                return str.toString().replace(/\D/g, '').trim();
+            };
+
             const trimmedData = {
                 name: formData.name.trim(),
                 email: cleanEmail(formData.email),
                 mobile: cleanMobile(formData.mobile),
                 password: cleanPassword(formData.password),
-                confirmPassword: cleanPassword(formData.confirmPassword)
+                confirmPassword: cleanPassword(formData.confirmPassword),
+                otp: cleanOtp(formData.otp)
             };
 
             const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
@@ -92,11 +161,7 @@ const Signup = () => {
             const data = await response.json();
 
             if (data.success) {
-                // Success leads to Login page (Professional flow)
                 navigate('/login');
-                // Optional: A small silent toast here could be useful to know why they are redirected, 
-                // but minimizing it as per "silent" preference, or use a soft success message on login page (advanced).
-                // For now, simple redirect.
             } else {
                 setError(data.message || 'Registration failed');
             }
@@ -130,27 +195,6 @@ const Signup = () => {
                             <p className="text-secondary-100 text-base leading-relaxed mb-8">
                                 "The first step towards getting somewhere is to decide you are not going to stay where you are."
                             </p>
-
-                            <div className="space-y-4 border-t border-white/10 pt-8">
-                                <div className="flex items-start gap-4">
-                                    <div className="mt-1 w-8 h-8 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
-                                        <FiCheckCircle className="text-secondary-300 text-sm" />
-                                    </div>
-                                    <div>
-                                        <h4 className="font-bold text-white text-sm">Secure Data</h4>
-                                        <p className="text-xs text-white/70">HIPAA Compliant Standard</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-4">
-                                    <div className="mt-1 w-8 h-8 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
-                                        <FiUser className="text-secondary-300 text-sm" />
-                                    </div>
-                                    <div>
-                                        <h4 className="font-bold text-white text-sm">Personalized Care</h4>
-                                        <p className="text-xs text-white/70">Tailored recovery paths</p>
-                                    </div>
-                                </div>
-                            </div>
                         </motion.div>
                     </div>
                 </div>
@@ -184,9 +228,10 @@ const Signup = () => {
                                         name="name"
                                         type="text"
                                         required
+                                        disabled={otpSent}
                                         value={formData.name}
                                         onChange={handleChange}
-                                        className="block w-full pl-10 pr-3 py-2.5 border border-surface-200 rounded-lg focus:ring-2 focus:ring-secondary-500 focus:border-transparent transition-all outline-none bg-surface-50/30"
+                                        className={`block w-full pl-10 pr-3 py-2.5 border border-surface-200 rounded-lg focus:ring-2 focus:ring-secondary-500 focus:border-transparent transition-all outline-none bg-surface-50/30 ${otpSent ? 'opacity-60 cursor-not-allowed' : ''}`}
                                         placeholder="John Doe"
                                     />
                                 </div>
@@ -204,12 +249,13 @@ const Signup = () => {
                                         name="email"
                                         type="email"
                                         required
+                                        disabled={otpSent}
                                         autoCapitalize="none"
                                         autoCorrect="off"
                                         spellCheck="false"
                                         value={formData.email}
                                         onChange={handleChange}
-                                        className="block w-full pl-10 pr-3 py-2.5 border border-surface-200 rounded-lg focus:ring-2 focus:ring-secondary-500 focus:border-transparent transition-all outline-none bg-surface-50/30"
+                                        className={`block w-full pl-10 pr-3 py-2.5 border border-surface-200 rounded-lg focus:ring-2 focus:ring-secondary-500 focus:border-transparent transition-all outline-none bg-surface-50/30 ${otpSent ? 'opacity-60 cursor-not-allowed' : ''}`}
                                         placeholder="name@example.com"
                                     />
                                 </div>
@@ -227,16 +273,17 @@ const Signup = () => {
                                         name="mobile"
                                         type="tel"
                                         required
+                                        disabled={otpSent}
                                         value={formData.mobile}
                                         onChange={handleChange}
-                                        className="block w-full pl-10 pr-3 py-2.5 border border-surface-200 rounded-lg focus:ring-2 focus:ring-secondary-500 focus:border-transparent transition-all outline-none bg-surface-50/30"
+                                        className={`block w-full pl-10 pr-3 py-2.5 border border-surface-200 rounded-lg focus:ring-2 focus:ring-secondary-500 focus:border-transparent transition-all outline-none bg-surface-50/30 ${otpSent ? 'opacity-60 cursor-not-allowed' : ''}`}
                                         placeholder="9876543210"
                                     />
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {/* Password */}
+                            {/* Passwords */}
+                            <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${otpSent ? 'hidden' : 'block'}`}>
                                 <div>
                                     <label className="block text-xs font-bold text-surface-700 uppercase tracking-wide mb-1" htmlFor="password">Password</label>
                                     <div className="relative">
@@ -247,11 +294,7 @@ const Signup = () => {
                                             id="password"
                                             name="password"
                                             type={showPassword ? "text" : "password"}
-                                            autoComplete="new-password"
-                                            autoCapitalize="none"
-                                            autoCorrect="off"
-                                            spellCheck="false"
-                                            required
+                                            required={!otpSent}
                                             value={formData.password}
                                             onChange={handleChange}
                                             className="block w-full pl-10 pr-8 py-2.5 border border-surface-200 rounded-lg focus:ring-2 focus:ring-secondary-500 focus:border-transparent transition-all outline-none bg-surface-50/30"
@@ -267,7 +310,6 @@ const Signup = () => {
                                     </div>
                                 </div>
 
-                                {/* Confirm Password */}
                                 <div>
                                     <label className="block text-xs font-bold text-surface-700 uppercase tracking-wide mb-1" htmlFor="confirmPassword">Confirm Password</label>
                                     <div className="relative">
@@ -278,11 +320,7 @@ const Signup = () => {
                                             id="confirmPassword"
                                             name="confirmPassword"
                                             type="password"
-                                            autoComplete="new-password"
-                                            autoCapitalize="none"
-                                            autoCorrect="off"
-                                            spellCheck="false"
-                                            required
+                                            required={!otpSent}
                                             value={formData.confirmPassword}
                                             onChange={handleChange}
                                             className="block w-full pl-10 pr-3 py-2.5 border border-surface-200 rounded-lg focus:ring-2 focus:ring-secondary-500 focus:border-transparent transition-all outline-none bg-surface-50/30"
@@ -291,6 +329,45 @@ const Signup = () => {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* OTP Input - Only Valid State */}
+                            {otpSent && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="pt-2"
+                                >
+                                    <label className="block text-xs font-bold text-surface-700 uppercase tracking-wide mb-1" htmlFor="otp">Verification Code</label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                            <FiCheckCircle className="text-primary-500" />
+                                        </div>
+                                        <input
+                                            id="otp"
+                                            name="otp"
+                                            type="text"
+                                            required
+                                            value={formData.otp}
+                                            onChange={handleChange}
+                                            className="block w-full pl-10 pr-3 py-2.5 border border-primary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none bg-primary-50"
+                                            placeholder="Enter 6-digit code"
+                                            maxLength={6}
+                                        />
+                                    </div>
+                                    <div className="flex justify-between items-center mt-2">
+                                        <p className="text-xs text-surface-500">
+                                            We sent a code to <span className="font-bold text-surface-800">{formData.email}</span>
+                                        </p>
+                                        <button
+                                            type="button"
+                                            onClick={handleEditDetails}
+                                            className="text-xs text-secondary-600 font-bold hover:underline"
+                                        >
+                                            Change Details
+                                        </button>
+                                    </div>
+                                </motion.div>
+                            )}
 
                             {error && (
                                 <motion.div
@@ -315,11 +392,12 @@ const Signup = () => {
                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                         </svg>
-                                        Creating Account...
+                                        {otpSent ? 'Verifying...' : 'Processing...'}
                                     </span>
                                 ) : (
                                     <span className="flex items-center">
-                                        Sign Up Now <FiArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                                        {otpSent ? 'Verify & Create Account' : 'Send Verification Code'}
+                                        {!otpSent && <FiArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />}
                                     </span>
                                 )}
                             </button>

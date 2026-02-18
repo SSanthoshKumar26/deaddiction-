@@ -227,6 +227,21 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleDeleteUser = async (id) => {
+        if (!window.confirm("WARNING: This will permanently delete the user and they will not be able to login again. Continue?")) return;
+        try {
+            const config = { headers: { Authorization: `Bearer ${user.token}` } };
+            const res = await axios.delete(`${API_BASE_URL}/api/admin/users/${id}`, config);
+            if (res.data.success) {
+                toast.success("User successfully deleted");
+                setPatients(patients.filter(p => p._id !== id));
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to delete user");
+        }
+    };
+
     // Export Functions
     const downloadFullReport = () => {
         const doc = new jsPDF('l', 'mm', 'a4'); // Landscape for more columns
@@ -511,7 +526,7 @@ const AdminDashboard = () => {
                                 />
                                 <SidebarItem
                                     icon={<FiUsers />}
-                                    label="Patient Records"
+                                    label="User Management"
                                     active={activeTab === 'patients'}
                                     onClick={() => { setActiveTab('patients'); if (window.innerWidth < 768) setIsSidebarOpen(false); }}
                                 />
@@ -874,7 +889,7 @@ const AdminDashboard = () => {
                             {activeTab === 'patients' && (
                                 <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                                     <div className="p-6 border-b border-slate-100">
-                                        <h3 className="text-lg font-bold text-slate-800">Registered Patient Directory</h3>
+                                        <h3 className="text-lg font-bold text-slate-800">User Management Directory</h3>
                                     </div>
                                     <div className="overflow-x-auto">
                                         <table className="w-full text-left border-collapse">
@@ -884,6 +899,7 @@ const AdminDashboard = () => {
                                                     <th className="px-6 py-4">Contact</th>
                                                     <th className="px-6 py-4">Role</th>
                                                     <th className="px-6 py-4">Joined Date</th>
+                                                    <th className="px-6 py-4 text-right">Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-slate-50">
@@ -900,6 +916,17 @@ const AdminDashboard = () => {
                                                             </span>
                                                         </td>
                                                         <td className="px-6 py-4 text-sm text-slate-500">{new Date(p.createdAt).toLocaleDateString()}</td>
+                                                        <td className="px-6 py-4 text-right">
+                                                            {user._id !== p._id && (
+                                                                <button
+                                                                    onClick={() => handleDeleteUser(p._id)}
+                                                                    className="p-2 bg-white border border-slate-200 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors tooltip"
+                                                                    title={p.role === 'admin' ? "Delete Admin Account" : "Delete User Account"}
+                                                                >
+                                                                    <FiTrash2 size={16} />
+                                                                </button>
+                                                            )}
+                                                        </td>
                                                     </tr>
                                                 ))}
                                             </tbody>

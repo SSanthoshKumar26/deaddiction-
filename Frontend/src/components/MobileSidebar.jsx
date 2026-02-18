@@ -166,14 +166,10 @@ const MobileSidebar = ({ isOpen, onClose, openReviewModal }) => {
                                         </button>
                                     </>
                                 ) : (
-                                    <Link
-                                        to="/login"
-                                        onClick={onClose}
-                                        className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl text-[15px] font-bold bg-slate-900 text-white shadow-xl shadow-slate-900/20 hover:bg-slate-800 transition-all active:scale-[0.98]"
-                                    >
-                                        <FaLock size={14} />
-                                        Secure Sign In
-                                    </Link>
+                                    <div className="p-5 bg-slate-50/50 rounded-2xl border border-slate-100/50 text-center animate-pulse">
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 font-display">Welcome to SOBER</p>
+                                        <p className="text-[11px] text-slate-500 font-bold leading-relaxed">Sign in from the header to manage your appointments.</p>
+                                    </div>
                                 )}
                             </div>
                         </div>

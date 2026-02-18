@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Verification = require('../models/Verification');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const sendEmail = require('../utils/sendEmail');
@@ -11,6 +12,66 @@ const generateToken = (id) => {
 };
 
 // @desc    Register a new user
+// @desc    Send Verification OTP
+// @route   POST /api/auth/send-verification-otp
+// @access  Public
+exports.sendVerificationOtp = async (req, res) => {
+    try {
+        const cleanEmail = (str) => str ? str.toString().replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '').replace(/\s+/g, '').toLowerCase().trim() : '';
+        const email = cleanEmail(req.body.email);
+        const name = req.body.name || 'User';
+
+        if (!email) {
+            return res.status(400).json({ success: false, message: 'Please provide an email address' });
+        }
+
+        // Check if user already exists
+        const userExists = await User.findOne({ email });
+        if (userExists) {
+            return res.status(400).json({ success: false, message: 'User already exists with this email' });
+        }
+
+        // Generate OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        // Delete any existing verification documents for this email
+        await Verification.deleteMany({ email });
+
+        // Create new verification document
+        await Verification.create({
+            email,
+            otp
+        });
+
+        // Send Email
+        const { emailVerifyTemplate } = require('../utils/emailTemplates');
+        const message = `Your verification code is: ${otp}`;
+        const htmlTemplate = emailVerifyTemplate(otp);
+
+        try {
+            await sendEmail({
+                email: email,
+                subject: 'Verify Your Email - SOBER Center',
+                message,
+                html: htmlTemplate
+            });
+
+            res.status(200).json({ success: true, message: 'OTP sent to email' });
+        } catch (err) {
+            console.error('Email Error:', err);
+            return res.status(500).json({
+                success: false,
+                message: 'Failed to send verification email. Please supply a valid email or try again later.'
+            });
+        }
+
+    } catch (error) {
+        console.error('Send OTP Error:', error);
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    }
+};
+
+// @desc    Register a new user
 // @route   POST /api/auth/register
 // @access  Public
 exports.registerUser = async (req, res) => {
@@ -18,15 +79,17 @@ exports.registerUser = async (req, res) => {
         const cleanEmail = (str) => str ? str.toString().replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '').replace(/\s+/g, '').toLowerCase().trim() : '';
         const cleanPassword = (str) => str ? str.toString().replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '').trim() : '';
         const cleanMobile = (str) => str ? str.toString().replace(/\s+/g, '').trim() : '';
+        const cleanOtp = (str) => str ? str.toString().replace(/\D/g, '').trim() : '';
 
         const email = cleanEmail(req.body.email);
         const password = cleanPassword(req.body.password);
         const mobile = cleanMobile(req.body.mobile);
         const name = req.body.name ? req.body.name.trim() : '';
         const confirmPassword = cleanPassword(req.body.confirmPassword);
+        const otp = cleanOtp(req.body.otp);
 
-        if (!name || !email || !mobile || !password || !confirmPassword) {
-            return res.status(400).json({ success: false, message: 'Please provide all fields' });
+        if (!name || !email || !mobile || !password || !confirmPassword || !otp) {
+            return res.status(400).json({ success: false, message: 'Please provide all fields including OTP' });
         }
 
         // Defensive check for matching passwords
@@ -34,7 +97,13 @@ exports.registerUser = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Passwords do not match' });
         }
 
-        // Check availability
+        // Verify OTP
+        const verificationRecord = await Verification.findOne({ email, otp });
+        if (!verificationRecord) {
+            return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
+        }
+
+        // Check availability (again, just in case)
         const userExists = await User.findOne({ email });
         if (userExists) {
             return res.status(400).json({ success: false, message: 'User already exists with this email' });
@@ -45,8 +114,12 @@ exports.registerUser = async (req, res) => {
             name,
             email,
             mobile,
-            password
+            password,
+            isVerified: true
         });
+
+        // Delete verification record
+        await Verification.deleteOne({ _id: verificationRecord._id });
 
         if (user) {
             res.status(201).json({
@@ -148,7 +221,7 @@ exports.forgotPassword = async (req, res) => {
         try {
             await sendEmail({
                 email: user.email,
-                subject: '🔐 Secure Verification Code - SOBER Center',
+                subject: 'Secure Verification Code - SOBER Center',
                 message,
                 html: htmlTemplate
             });
@@ -255,5 +328,98 @@ exports.resetPassword = async (req, res) => {
     } catch (error) {
         console.error('Reset Password Error:', error);
         res.status(500).json({ success: false, message: error.message || 'Server Error' });
+    }
+};
+
+// @desc    Update User Profile
+// @route   PUT /api/auth/profile
+// @access  Private
+exports.updateProfile = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+
+        if (user) {
+            user.name = req.body.name || user.name;
+            user.mobile = req.body.mobile || user.mobile;
+
+            if (req.body.password) {
+                if (!req.body.oldPassword) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Old password is required to set a new password'
+                    });
+                }
+
+                const isMatch = await user.matchPassword(req.body.oldPassword);
+                if (!isMatch) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Incorrect old password'
+                    });
+                }
+                user.password = req.body.password;
+            }
+
+            const updatedUser = await user.save();
+
+            res.status(200).json({
+                success: true,
+                data: {
+                    _id: updatedUser._id,
+                    name: updatedUser.name,
+                    email: updatedUser.email,
+                    mobile: updatedUser.mobile,
+                    role: updatedUser.role,
+                    token: generateToken(updatedUser._id)
+                },
+                message: 'Profile updated successfully'
+            });
+        } else {
+            res.status(404).json({ success: false, message: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Update Profile Error:', error);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
+
+// @desc    Verify Old Password
+// @route   POST /api/auth/verify-password
+// @access  Private
+exports.verifyOldPassword = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        const isMatch = await user.matchPassword(req.body.oldPassword);
+        if (!isMatch) {
+            return res.status(400).json({ success: false, message: 'Incorrect old password' });
+        }
+
+        res.status(200).json({ success: true, message: 'Password verified' });
+    } catch (error) {
+        console.error('Verify Old Password Error:', error);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
+// @desc    Delete user
+// @route   DELETE /api/auth/users/:id
+// @access  Private/Admin
+exports.deleteUser = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        await User.deleteOne({ _id: req.params.id });
+
+        res.status(200).json({ success: true, message: 'User removed' });
+    } catch (error) {
+        console.error('Delete User Error:', error);
+        res.status(500).json({ success: false, message: 'Server Error' });
     }
 };
