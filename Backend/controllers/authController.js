@@ -15,9 +15,15 @@ const generateToken = (id) => {
 // @access  Public
 exports.registerUser = async (req, res) => {
     try {
-        const { name, mobile, confirmPassword } = req.body;
-        const email = req.body.email ? req.body.email.trim().toLowerCase() : '';
-        const password = req.body.password ? req.body.password.trim() : '';
+        const cleanEmail = (str) => str ? str.toString().replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '').replace(/\s+/g, '').toLowerCase().trim() : '';
+        const cleanPassword = (str) => str ? str.toString().replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '').trim() : '';
+        const cleanMobile = (str) => str ? str.toString().replace(/\s+/g, '').trim() : '';
+
+        const email = cleanEmail(req.body.email);
+        const password = cleanPassword(req.body.password);
+        const mobile = cleanMobile(req.body.mobile);
+        const name = req.body.name ? req.body.name.trim() : '';
+        const confirmPassword = cleanPassword(req.body.confirmPassword);
 
         if (!name || !email || !mobile || !password || !confirmPassword) {
             return res.status(400).json({ success: false, message: 'Please provide all fields' });
@@ -69,8 +75,11 @@ exports.registerUser = async (req, res) => {
 // @access  Public
 exports.loginUser = async (req, res) => {
     try {
-        const email = req.body.email ? req.body.email.trim().toLowerCase() : '';
-        const password = req.body.password ? req.body.password.trim() : '';
+        const cleanEmail = (str) => str ? str.toString().replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '').replace(/\s+/g, '').toLowerCase().trim() : '';
+        const cleanPassword = (str) => str ? str.toString().replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '').trim() : '';
+
+        const email = cleanEmail(req.body.email);
+        const password = cleanPassword(req.body.password);
 
         // Validate input
         if (!email || !password) {
