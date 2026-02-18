@@ -23,8 +23,10 @@ const Signup = () => {
     };
 
     const validateForm = () => {
-        const pass = formData.password;
-        const confirmPass = formData.confirmPassword;
+        const email = formData.email.trim().toLowerCase().replace(/\s+/g, '');
+        const pass = formData.password.trim();
+        const confirmPass = formData.confirmPassword.trim();
+        const mobile = formData.mobile.replace(/\s+/g, '').trim();
 
         if (pass !== confirmPass) {
             setError('Passwords do not match. Please ensure both fields are identical.');
@@ -34,7 +36,7 @@ const Signup = () => {
             setError('Password must be at least 6 characters');
             return false;
         }
-        if (!/^\d{10}$/.test(formData.mobile)) {
+        if (!/^\d{10}$/.test(mobile)) {
             setError('Please enter a valid 10-digit mobile number');
             return false;
         }
@@ -51,23 +53,31 @@ const Signup = () => {
         try {
             const cleanEmail = (str) => {
                 if (!str) return '';
-                return str.replace(/[\u200B-\u200D\uFEFF]/g, '')
-                    .replace(/\s+/g, '')
+                return str.toString()
+                    .replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '') // remove invisible and non-breaking chars
+                    .replace(/\s+/g, '') // remove ALL whitespace for email
                     .toLowerCase()
                     .trim();
             };
 
             const cleanPassword = (str) => {
                 if (!str) return '';
-                return str.replace(/[\u200B-\u200D\uFEFF]/g, '')
-                    .trim();
+                return str.toString()
+                    .replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '') // remove invisible and non-breaking chars
+                    .trim(); // Only trim, don't touch internal spaces
+            };
+
+            const cleanMobile = (str) => {
+                if (!str) return '';
+                return str.toString().replace(/\s+/g, '').trim();
             };
 
             const trimmedData = {
                 name: formData.name.trim(),
                 email: cleanEmail(formData.email),
-                mobile: formData.mobile.trim(),
-                password: cleanPassword(formData.password)
+                mobile: cleanMobile(formData.mobile),
+                password: cleanPassword(formData.password),
+                confirmPassword: cleanPassword(formData.confirmPassword)
             };
 
             const response = await fetch(`${API_BASE_URL}/api/auth/register`, {

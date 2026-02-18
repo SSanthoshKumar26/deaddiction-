@@ -39,7 +39,8 @@ const Login = () => {
         // Clean input for mobile compatibility:
         const cleanEmail = (str) => {
             if (!str) return '';
-            return str.replace(/[\u200B-\u200D\uFEFF]/g, '') // remove invisible chars
+            return str.toString()
+                .replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '') // remove invisible and non-breaking chars
                 .replace(/\s+/g, '') // remove ALL whitespace for email
                 .toLowerCase()
                 .trim();
@@ -47,7 +48,8 @@ const Login = () => {
 
         const cleanPassword = (str) => {
             if (!str) return '';
-            return str.replace(/[\u200B-\u200D\uFEFF]/g, '') // remove invisible chars
+            return str.toString()
+                .replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u205F\u3000]/g, '') // remove invisible and non-breaking chars
                 .trim(); // Only trim, don't touch internal spaces
         };
 
